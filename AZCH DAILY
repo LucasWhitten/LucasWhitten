@@ -1,0 +1,105 @@
+
+
+
+------------ AZCH Daily (Member Roster View) ----------------------------------------
+DECLARE @startOfCurrentMonth1 DATETIME
+SET @startOfCurrentMonth1 = DATEADD(month, DATEDIFF(month, 0, CURRENT_TIMESTAMP), 0)
+
+select ProfileId
+--, HealthPlanId
+--, MemberName
+--, FORMAT(Birthdate, 'yyyy-MM-dd') AS BirthDate
+, Age
+, Gender
+, County
+--, Phone
+, OrgName
+, Network
+, GroupName
+--, FORMAT(FirstEncounter, 'yyyy-MM-dd hh:mm:ss tt') AS FirstEncounter
+, FORMAT(CAST([FirstEncounter] as datetime), 'MM/dd/yyyy hh:mm:ss tt') AS FirstEncounter
+FROM [dbo].[Member_Demographic_Report_v]
+Where OrgID = 8001
+AND FirstEncounter >= DATEADD(month, -1, @startOfCurrentMonth1) 
+AND FirstEncounter < @startOfCurrentMonth1
+
+------------ AZCH Encounter (Encounter Report View) ---------------------------------
+DECLARE @startOfCurrentMonth2 DATETIME
+SET @startOfCurrentMonth2 = DATEADD(month, DATEDIFF(month, 0, CURRENT_TIMESTAMP), 0)
+
+select ProfileId
+--, HealthPlanId
+--, MemberName
+--, FORMAT(Birthdate, 'yyyy-MM-dd') AS BirthDate
+, Age
+, Gender
+, County
+--, Phone
+, OrgName
+, Network
+, GroupName
+, IsScheduled
+, IsComplete
+--, StartedUTC
+, FORMAT(CAST([StartedUTC] as datetime), 'MM/dd/yyyy hh:mm:ss tt') AS StartedUTC
+, EncounterType
+From [dbo].[Encounter_Report_v]
+Where OrgId = 8001
+AND StartedUTC >= DATEADD(month, -1, @startOfCurrentMonth2) 
+AND StartedUTC < @startOfCurrentMonth2
+
+------------- AZCH Scoring (Encounter Scoring Report View) --------------------------
+DECLARE @startOfCurrentMonth3 DATETIME
+SET @startOfCurrentMonth3 = DATEADD(month, DATEDIFF(month, 0, CURRENT_TIMESTAMP), 0)
+
+select ProfileId
+--, HealthPlanId
+--, MemberName
+--, FORMAT(Birthdate, 'yyyy-MM-dd') AS BirthDate
+, Age
+, Gender
+, County
+--, Phone
+--, OrgName
+, OrganizationName AS OrgName
+, Network
+, GroupName
+--, StartedUtc
+, FORMAT(CAST([StartedUtc] as datetime), 'MM/dd/yyyy hh:mm:ss tt') AS StartedUtc
+, EncounterType
+, '1' AS IsScheduled
+, '1' AS IsComplete
+, Score
+, CompletedInLastWeek
+From [dbo].[Encounter_Scoring_Report_v]
+Where OrgId = 8001
+AND StartedUtc >= DATEADD(month, -1, @startOfCurrentMonth3) 
+AND StartedUtc < @startOfCurrentMonth3
+
+---------------------- AZCH SDOH Detailed Response (SDOH Detail Report View) ------------------------
+DECLARE @startOfCurrentMonth4 DATETIME
+SET @startOfCurrentMonth4 = DATEADD(month, DATEDIFF(month, 0, CURRENT_TIMESTAMP), 0)
+
+select ProfileId
+--, HealthPlanId  -- No PI
+--, MemberName  -- No PI
+--, FORMAT(Birthdate, 'yyyy-MM-dd') AS BirthDate  -- No PI
+, Age
+, Gender
+, County
+--, Phone   -- No PI
+, OrganizationName as OrgName
+, Network
+, GroupName
+, EncounterName
+--, ScreeningCompleteDateTime
+, FORMAT(CAST([ScreeningCompleteDateTime] as datetime), 'MM/dd/yyyy hh:mm:ss tt') AS ScreeningCompleteDateTime
+, ResourceType
+, ScreeningQuestion
+, ScreeningMemberAnswer
+, ScreeningAnswerScoreValue
+, TotalScreeningScore
+From [dbo].[SDOH_Detail_Report_V]
+Where OrgId = 8001
+AND ScreeningCompleteDateTime >= DATEADD(month, -1, @startOfCurrentMonth4) 
+AND ScreeningCompleteDateTime < @startOfCurrentMonth4
